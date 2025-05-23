@@ -11,6 +11,7 @@ enum UserRoles: int
     case ADMIN = 0;
     case EDITOR = 1;
     case VIEWER = 2;
+    case DEACTIVATED = 3;
 
     public function isAdmin(): bool
     {
@@ -25,5 +26,10 @@ enum UserRoles: int
     public function isViewer(): bool
     {
         return $this === self::VIEWER;
+    }
+
+    public function isDeactivated(): bool
+    {
+        return $this === self::DEACTIVATED;
     }
 }

@@ -14,6 +14,7 @@ use App\Http\Controllers\FilesController;
 use App\Http\Middleware\ProjectIsInitialized;
 use App\Http\Middleware\ProjectIsNotInitialized;
 use App\Http\Middleware\UserIsAdmin;
+use App\Http\Middleware\UserIsNotDeactivated;
 use App\Http\Middleware\UserIsNotViewer;
 use Illuminate\Support\Facades\Route;
 
@@ -32,8 +33,7 @@ Route::middleware([ProjectIsInitialized::class])->group(function () {
         ->name("standard-login");
 
     Route::get("/public/{post_id}", PublicPostController::class)->name("public.post");
-
-    Route::middleware(['auth'])->group(function (): void {
+    Route::middleware(['auth', UserIsNotDeactivated::class])->group(function (): void {
         Route::resource("posts", PostController::class)
             ->middlewareFor(["store", "destroy", "update"], UserIsNotViewer::class)
             ->only(['store', 'show', 'update', 'destroy']);
@@ -65,6 +65,10 @@ Route::middleware([ProjectIsInitialized::class])->group(function () {
 
         Route::post("files", FilesController::class)->name('files.store');
 
-        Route::get('/logout', [AuthController::class, "logout"])->name('logout');
     });
+
+    Route::get('/logout', [AuthController::class, "logout"])
+        ->middleware(['auth'])
+        ->name('logout');
+
 });

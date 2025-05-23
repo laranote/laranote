@@ -29,7 +29,7 @@ class UserCanEditController extends Controller
         }
 
         return response()->json([
-            'can_edit' => !$user->role->isViewer(),
+            'can_edit' => !($user->role->isViewer() or $user->role->isDeactivated()),
         ]);
     }
 }
