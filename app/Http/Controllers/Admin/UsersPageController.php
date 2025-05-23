@@ -21,6 +21,7 @@ class UsersPageController extends Controller
         ]);
     }
 
+
     public function store(ChangeUserRoleRequest $request): void
     {
         User::query()->find($request->validated("user_id"))->update([

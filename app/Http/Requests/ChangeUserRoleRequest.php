@@ -11,7 +11,7 @@ use Illuminate\Validation\Rule;
 class ChangeUserRoleRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
+     * Determine if the user is not changing his own role.
      */
     public function authorize(): bool
     {

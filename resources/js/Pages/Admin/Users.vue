@@ -36,19 +36,25 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:bg-neutral-800">
                                         <div class="flex items-center gap-4">
-                                            <select
-                                                :disabled="loading"
-                                                v-model="users[user_n].role"
-                                                @change="changeRole(user_n)"
-                                                class="mt-1 block w-full py-2 ps-3 pe-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-neutral-800 dark:text-gray-300"
-                                            >
-
-                                                <option v-for="(index, role) in userRoles"
-                                                        :key="index"
-                                                        :value="index">
-                                                    {{ role }}
-                                                </option>
-                                            </select>
+                                            <template v-if="user.id === $page.props.auth.user.id">
+                                                <span class="text-sm text-gray-900 dark:text-gray-300">
+                                                    (Current User)
+                                                </span>
+                                            </template>
+                                            <template v-else>
+                                                <select
+                                                    :disabled="loading"
+                                                    v-model="users[user_n].role"
+                                                    @change="changeRole(user_n)"
+                                                    class="mt-1 block w-full py-2 ps-3 pe-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-neutral-800 dark:text-gray-300"
+                                                >
+                                                    <option v-for="(index, role) in userRoles"
+                                                            :key="index"
+                                                            :value="index">
+                                                        {{ role }}
+                                                    </option>
+                                                </select>
+                                            </template>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap dark:bg-neutral-800 ">
