@@ -9,6 +9,13 @@ Laranote is a powerful note-taking application that allows users to create, edit
 ## Key Features
 
 - **Rich Text Editor** powered by TipTap with:
+  - AI text tools
+    - Prompt
+    - Summarize text
+    - Shorten text
+    - Fix grammar & spelling
+    - Translate Text
+  - AI image generation
   - Tables
   - Lists
   - Code Blocks

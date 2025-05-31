@@ -37,19 +37,31 @@
                                 </ul>
                                 The menu includes options for:
                                 <ul>
+                                    <li>
+                                        <strong class="dark:text-gray-300">AI text tools:</strong>
+                                        <ul>
+                                            <li>Prompt</li>
+                                            <li>Summarize text</li>
+                                            <li>Shorten text</li>
+                                            <li>Fix grammar & spelling</li>
+                                            <li>Translate Text</li>
+                                        </ul>
+                                        <strong class="dark:text-gray-300">AI image generation:</strong>
+                                        <ul>
+                                            <li>Generate image</li>
+                                        </ul>
+                                    </li>
                                     <li>Bold, italic, and underline text</li>
+                                    <li>Text left, center, and right</li>
                                     <li>Headings (H1, H2, H3)</li>
                                     <li>Lists (bullet, numbered, and task lists)</li>
                                     <li>Blockquotes</li>
                                     <li>Code blocks</li>
-                                    <li><strong class="dark:text-gray-300">Tables:</strong> Insert and edit tables with resizable columns</li>
+                                    <li><strong class="dark:text-gray-300">Tables:</strong> Insert and edit tables with resizable columns, table options available on right-click.</li>
                                     <li><strong class="dark:text-gray-300">Horizontal Rules:</strong> Add divider lines to separate content</li>
                                     <li><strong class="dark:text-gray-300">Emojis:</strong> Quick access to common emojis via the emoji picker</li>
                                 </ul>
                             </li>
-
-                            <li><strong class="dark:text-gray-300">Autosave:</strong> Changes save automatically after 1 second</li>
-                            <li><strong class="dark:text-gray-300">Status Indicator:</strong> Shows "Saving", "Saved", or "Error"</li>
                         </ul>
                     </div>
                 </section>
@@ -60,9 +72,6 @@
                         <div><code>⌘ + B</code><span class="ml-4">Bold</span></div>
                         <div><code>⌘ + I</code><span class="ml-4">Italic</span></div>
                         <div><code>⌘ + U</code><span class="ml-4">Underline</span></div>
-                        <div><code>⌘ + 1</code><span class="ml-4">Heading 1</span></div>
-                        <div><code>⌘ + 2</code><span class="ml-4">Heading 2</span></div>
-                        <div><code>⌘ + 3</code><span class="ml-4">Heading 3</span></div>
                         <div><code>⌘ + Shift + 7</code><span class="ml-4">Ordered List</span></div>
                         <div><code>⌘ + Shift + 8</code><span class="ml-4">Bullet List</span></div>
                         <div><code>⌘ + Shift + 9</code><span class="ml-4">Task List</span></div>
