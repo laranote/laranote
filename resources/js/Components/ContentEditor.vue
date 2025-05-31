@@ -47,6 +47,7 @@
                 </div>
             </div>
         </BubbleMenu>
+        <TableOptionsMenu v-if="editor" :editor="editor" />
         <EditorContent :editor="editor" class="border-0 rounded-lg"/>
     </div>
 </template>
@@ -59,6 +60,7 @@ import {commonEmojis} from '../Data/emojis'
 import {buttonSections} from '../Data/editorButtons'
 import {createEditor} from '../Config/editor'
 import EditorButton from './EditorButton.vue'
+import TableOptionsMenu from './TableOptionsMenu.vue'
 import EmoticonHappyOutlineIcon from 'vue-material-design-icons/EmoticonHappyOutline.vue'
 import {HocuspocusProvider} from '@hocuspocus/provider'
 
