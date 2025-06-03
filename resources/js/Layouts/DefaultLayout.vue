@@ -77,8 +77,14 @@
                                     </Link>
                                 </div>
 
-                                <!-- Child Draggable List -->
-                                <div v-if="expandedNotes.has(element.id)" class="transition-all duration-300 ease-in-out">
+                                <!-- Child Draggable List - Always present for drag-and-drop -->
+                                <div
+                                    class="transition-all duration-300 ease-in-out"
+                                    :class="{
+                                        'hidden': !expandedNotes.has(element.id) && (displayChildrenMap[element.id] || []).length === 0 && !isDragging,
+                                        'h-0 overflow-hidden': !expandedNotes.has(element.id) && (displayChildrenMap[element.id] || []).length > 0 && !isDragging
+                                    }"
+                                >
                                     <draggable
                                         :model-value="displayChildrenMap[element.id] || []"
                                         @update:model-value="value => updateChildrenMap(element.id, value)"
@@ -111,6 +117,7 @@
                                                         <p>{{ child.title ?? child.created_at }}</p>
                                                     </div>
                                                     <button
+                                                        v-if="!page.props.is_viewer"
                                                         class="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 dark:text-gray-300"
                                                         @click.prevent="confirmDelete(child.id)"
                                                     >
@@ -409,6 +416,9 @@ const handleChange = (e, parentId = null) => {
         if (!childrenMap.value[newParentId].some(p => p.id === item.id)) {
             childrenMap.value[newParentId].push(item)
         }
+
+        // Automatically expand the parent note to show the new child
+        expandedNotes.value.add(parseInt(newParentId))
 
         // Move children to new parent too
         if (isParent) {
