@@ -34,6 +34,10 @@ Route::middleware([ProjectIsInitialized::class])->group(function () {
 
     Route::get("/public/{post_id}", PublicPostController::class)->name("public.post");
     Route::middleware(['auth', UserIsNotDeactivated::class])->group(function (): void {
+
+        Route::get("/posts/search", [PostController::class, 'search'])
+            ->name('posts.search');
+
         Route::resource("posts", PostController::class)
             ->middlewareFor(["store", "destroy", "update"], UserIsNotViewer::class)
             ->only(['store', 'show', 'update', 'destroy']);
