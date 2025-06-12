@@ -11,16 +11,18 @@
                     />
                 </div>
             </div>
-            <div class="">
-                <input
+            <div class="max-w-[calc(100%-250px)]">
+                <textarea
                     v-if="!page.props.is_viewer"
-                    type="text"
                     v-model="post.title"
                     @editor-mounted="setEditor"
-                    class="rounded font-bold text-4xl mb-5 w-full border-0 focus:ring-0 dark:bg-neutral-800 dark:text-gray-300"
-                >
+                    class="rounded font-bold text-4xl mb-5 border-0 focus:ring-0 dark:bg-neutral-800 dark:text-gray-300 title-input w-full resize-none break-words whitespace-pre-wrap min-h-[3.5rem] leading-[1.2] overflow-hidden"
+                    rows="1"
+                    @input="autoResize"
+                    ref="titleTextarea"
+                ></textarea>
                 <p v-else v-html="post.title"
-                   class="font-bold text-xl mb-5 w-full dark:bg-neutral-800 dark:text-gray-300">
+                   class="font-bold text-xl mb-5 w-full dark:bg-neutral-800 dark:text-gray-300 break-words whitespace-pre-wrap">
                 </p>
                 <ContentEditor
                     :postId="post.id"
@@ -50,9 +52,8 @@ import DefaultLayout from "@/Layouts/DefaultLayout.vue";
 import SharePostButtons from "@/Components/SharePostButtons.vue";
 import ContentEditor from "@/Components/ContentEditor.vue";
 import {Head, router, usePage} from "@inertiajs/vue3";
-import axios from "axios";
 import _ from "lodash";
-import {watch, ref} from "vue";
+import {watch, ref, nextTick, onMounted} from "vue";
 import TableOfContents from "@/Components/TableOfContents/TableOfContents.vue";
 
 const page = usePage()
@@ -102,6 +103,22 @@ watch(
 
 const editor = ref(null)
 const items = ref([])
+const titleTextarea = ref(null)
+
+// Auto-resize textarea to fit content
+const autoResize = () => {
+    if (titleTextarea.value) {
+        titleTextarea.value.style.height = 'auto'
+        titleTextarea.value.style.height = titleTextarea.value.scrollHeight + 'px'
+    }
+}
+
+// Ensure textarea resizes on mount
+onMounted(() => {
+    nextTick(() => {
+        autoResize()
+    })
+})
 
 // Get a reference to the editor instance when ContentEditor mounts
 const setEditor = (editorInstance) => {
@@ -171,8 +188,8 @@ const updateTocItems = () => {
                     textNodes.push(node.textContent);
                 }
                 else if (node.nodeType === Node.ELEMENT_NODE &&
-                         !node.classList.contains('collaboration-cursor__label') &&
-                         !node.classList.contains('collaboration-cursor__caret')) {
+                    !node.classList.contains('collaboration-cursor__label') &&
+                    !node.classList.contains('collaboration-cursor__caret')) {
                     textNodes.push(node.textContent);
                 }
             });
