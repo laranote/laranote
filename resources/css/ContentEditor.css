@@ -609,3 +609,51 @@ code {
     }
 }
 
+/* Drag Handle Styles */
+.editor-drag-handle {
+  position: absolute;
+  display: none;
+  width: 24px;
+  height: 24px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  cursor: grab;
+  opacity: 0.8;
+  z-index: 1000;
+  transition: opacity 0.2s, transform 0.1s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  align-items: center;
+  justify-content: center;
+  color: black;
+}
+
+.editor-drag-handle:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.editor-drag-handle.dragging {
+  cursor: grabbing;
+  opacity: 1;
+  transform: scale(0.95);
+}
+
+.dark .editor-drag-handle {
+    background: #262626;
+    border: 1px solid #3f3f46;
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.drag-drop-indicator{
+    position: fixed;
+    height: 2px;
+    background: rgba(59, 130, 246, 0.5);
+    border-radius: 1px;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    box-shadow: 0 0 4px rgba(59, 130, 246, 0.5);
+    transition: all 0.1s ease;
+}

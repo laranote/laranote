@@ -11,6 +11,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\PublicPostController;
 use App\Http\Controllers\ReorderPostsController;
 use App\Http\Controllers\FilesController;
+use App\Http\Controllers\SearchPostController;
 use App\Http\Middleware\ProjectIsInitialized;
 use App\Http\Middleware\ProjectIsNotInitialized;
 use App\Http\Middleware\UserIsAdmin;
@@ -35,7 +36,7 @@ Route::middleware([ProjectIsInitialized::class])->group(function () {
     Route::get("/public/{post_id}", PublicPostController::class)->name("public.post");
     Route::middleware(['auth', UserIsNotDeactivated::class])->group(function (): void {
 
-        Route::get("/posts/search", [PostController::class, 'search'])
+        Route::get("/posts/search", SearchPostController::class)
             ->name('posts.search');
 
         Route::resource("posts", PostController::class)

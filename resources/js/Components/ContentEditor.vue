@@ -115,6 +115,10 @@ onMounted(() => {
 })
 
 function setLink() {
+    const { state } = editor.value
+    const { selection } = state
+    const { empty } = selection
+
     const previousUrl = editor.value.getAttributes('link').href
     const url = window.prompt('URL', previousUrl)
 
@@ -135,13 +139,22 @@ function setLink() {
         return
     }
 
-    // update link
-    editor.value
-        .chain()
-        .focus()
-        .extendMarkRange('link')
-        .setLink({href: url})
-        .run()
+    // Check if there's a text selection
+    if (!empty) {
+        editor.value
+            .chain()
+            .focus()
+            .extendMarkRange('link')
+            .setLink({href: url})
+            .run()
+    } else {
+        // No text selected - insert the URL as both text and link
+        editor.value
+            .chain()
+            .focus()
+            .insertContent(`<a href="${url}">${url}</a>`)
+            .run()
+    }
 }
 
 const shouldShowBubbleMenu = ({editor}) => {
