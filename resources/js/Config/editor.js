@@ -24,6 +24,7 @@ import {common, createLowlight} from "lowlight"
 import {usePage} from "@inertiajs/vue3";
 import {GeminiAI} from "@/CustomExtensions/gemini-ai.js";
 import {FalAI} from "@/CustomExtensions/fal-ai.js";
+import { DragHandleExtension } from '@/CustomExtensions/drag-handle-extension.js'
 
 const lowlight = createLowlight(common)
 const page = usePage()
@@ -173,8 +174,12 @@ export const createEditor = ({provider, editable}) => ({
                 };
             },
         }),
+        DragHandleExtension.configure({
+            dragHandleWidth: 24,
+            allowedNodeTypes: ['paragraph', 'heading', 'blockquote', 'codeBlock', 'orderedList', 'bulletList', 'table', 'taskList', 'horizontalRule', 'details']
+        }),
         GeminiAI,
-        FalAI
+        FalAI,
     ],
     editorProps: {
         attributes: {
