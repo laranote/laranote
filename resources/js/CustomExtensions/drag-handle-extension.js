@@ -118,15 +118,6 @@ class DragHandlePlugin {
             return
         }
 
-        // Check if we're near the left edge
-        const editorRect = this.editorView.dom.getBoundingClientRect()
-        const relativeX = event.clientX - editorRect.left
-
-        if (relativeX > this.options.dragHandleWidth) {
-            this.scheduledHide()
-            return
-        }
-
         const blockNode = this.findBlockNodeAt(pos.pos)
         if (!blockNode.node || blockNode.pos === null) {
             this.scheduledHide()
@@ -160,6 +151,7 @@ class DragHandlePlugin {
                     return { node, pos: nodePos }
                 }
             } catch (e) {
+                // Continue to next level if error
             }
         }
 
@@ -218,7 +210,7 @@ class DragHandlePlugin {
         const initialPos = this.currentPos
         const node = this.currentNode
         const nodeSize = node.nodeSize
-
+        const initialY = event.clientY
 
         const handleMouseMove = (moveEvent) => {
             if (!this.isDragging) return
@@ -247,20 +239,20 @@ class DragHandlePlugin {
             // Hide drop indicator
             this.hideDropIndicator()
 
-            // Find the position where the node should be moved to
-            const targetPos = this.findDropPosition(upEvent.clientY)
+            // Calculate how far we actually moved
+            const dragDistance = Math.abs(upEvent.clientY - initialY)
 
-            if (targetPos !== null && targetPos !== initialPos) {
-                this.moveNode(initialPos, node, targetPos, nodeSize)
+            // Only perform move if we dragged a meaningful distance (prevents accidental clicks and micro-drags)
+            if (dragDistance >= 5) {
+                // Find the position where the node should be moved to
+                const targetPos = this.findDropPosition(upEvent.clientY)
+
+                if (targetPos !== null && targetPos !== initialPos) {
+                    this.moveNode(initialPos, node, targetPos, nodeSize)
+                }
             }
 
-            // Schedule hiding the handle
-            clearTimeout(this.hoverTimeout)
-            this.hoverTimeout = setTimeout(() => {
-                if (!this.isMouseOverHandle) {
-                    this.hideDragHandle()
-                }
-            }, 500)
+            this.hideDragHandle()
 
             // Clean up event listeners
             document.removeEventListener('mousemove', handleMouseMove)
