@@ -23,7 +23,7 @@ class GeminiAIController extends Controller
         // Check if API key is not set
         if (!$apiKey) {
             \Log::warning('No Gemini API key configured');
-            
+
             // Return an error response that will trigger the SweetAlert
             return response()->json([
                 'error' => 'Gemini API key not configured',
@@ -112,15 +112,15 @@ class GeminiAIController extends Controller
             } else {
                 $errorDetails = $response->json();
                 \Log::error('Gemini API error response', ['error' => $errorDetails]);
-                
+
                 // Extract specific error information
                 $errorCode = $errorDetails['error']['code'] ?? 500;
                 $errorMessage = $errorDetails['error']['message'] ?? 'Unknown error';
                 $errorStatus = $errorDetails['error']['status'] ?? 'ERROR';
-                
+
                 // Create a user-friendly error message based on the error
                 $userMessage = 'Failed to get response from Gemini AI';
-                
+
                 if ($errorCode == 503 && str_contains($errorMessage, 'overloaded')) {
                     $userMessage = 'The Gemini AI service is currently overloaded. Please try again later.';
                 } elseif ($errorCode == 400) {
@@ -128,7 +128,7 @@ class GeminiAIController extends Controller
                 } elseif ($errorCode == 401 || $errorCode == 403) {
                     $userMessage = 'Authentication error with Gemini AI. Please check your API key.';
                 }
-                
+
                 return response()->json([
                     'error' => $userMessage,
                     'errorCode' => $errorCode,
@@ -138,16 +138,16 @@ class GeminiAIController extends Controller
             }
         } catch (\Exception $e) {
             \Log::error('Exception when calling Gemini API', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-            
+
             // Create a user-friendly error message based on the exception
             $userMessage = 'Error connecting to Gemini AI';
-            
+
             if (str_contains($e->getMessage(), 'cURL error 28')) {
                 $userMessage = 'Connection timeout when calling Gemini AI. The service might be down.';
             } elseif (str_contains($e->getMessage(), 'cURL error 6')) {
                 $userMessage = 'Could not resolve host for Gemini AI. Please check your internet connection.';
             }
-            
+
             return response()->json([
                 'error' => $userMessage,
                 'errorCode' => 'CONNECTION_ERROR',
