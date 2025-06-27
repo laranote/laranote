@@ -41,6 +41,9 @@ return [
 
     'fal_ai' => [
         'key' => env('FAL_AI_API_KEY'),
+    ],
+    'openrouter_ai' => [
+        'key' => env('OPENROUTER_AI_API_KEY'),
     ]
 
 ];

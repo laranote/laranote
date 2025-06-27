@@ -9,7 +9,7 @@
                 placement: 'bottom-start',
                 offset: [0, 10]
             }"
-            class="bubble-menu flex items-center gap-1 p-2 rounded-lg shadow-lg bg-white border border-gray-200 min-w-[810px] dark:text-gray-300 dark:bg-neutral-800 "
+            class="bubble-menu flex items-center gap-1 p-2 rounded-lg shadow-lg bg-white border border-gray-200 min-w-[840px] dark:text-gray-300 dark:bg-neutral-800 "
         >
             <template v-for="(section, sectionIndex) in buttonSections" :key="sectionIndex">
                 <template v-for="(button, buttonIndex) in section" :key="buttonIndex">

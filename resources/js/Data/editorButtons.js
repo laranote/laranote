@@ -18,6 +18,7 @@ import FormatAlignRightIcon from 'vue-material-design-icons/FormatAlignRight.vue
 import LinkIcon from 'vue-material-design-icons/Link.vue'
 import StarFourPointsIcon from 'vue-material-design-icons/StarFourPoints.vue'
 import ImagePlus from 'vue-material-design-icons/ImagePlus.vue'
+import RobotIcon from 'vue-material-design-icons/Robot.vue';
 
 
 // Group buttons by sections for better organization
@@ -43,15 +44,26 @@ export const buttonSections = [
                 // Store click position for potential use in the extension
                 window.falAIClickX = event ? event.clientX : null;
                 window.falAIClickY = event ? event.clientY : null;
-                
+
                 // Hide the bubble menu
                 const bubbleMenus = document.querySelectorAll('.bubble-menu');
                 bubbleMenus.forEach(menu => {
                     menu.style.display = 'none';
                 });
-                
+
                 // Trigger the FalAI extension
                 editor.chain().focus().insertFalAI().run();
+            }
+        },
+        {
+            icon: RobotIcon,
+            title: "Explore AI",
+            isActive: () => false,
+            onClick: (editor, setLink, event) => {
+                window.openRouterClickX = event ? event.clientX : null;
+                window.openRouterClickY = event ? event.clientY : null;
+
+                editor.chain().focus().insertOpenRouterAI().run();
             }
         }
     ],

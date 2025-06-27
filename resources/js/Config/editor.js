@@ -24,6 +24,7 @@ import {common, createLowlight} from "lowlight"
 import {usePage} from "@inertiajs/vue3";
 import {GeminiAI} from "@/CustomExtensions/gemini-ai.js";
 import {FalAI} from "@/CustomExtensions/fal-ai.js";
+import {OpenRouterAI} from "@/CustomExtensions/openrouter-ai.js";
 
 const lowlight = createLowlight(common)
 const page = usePage()
@@ -174,7 +175,8 @@ export const createEditor = ({provider, editable}) => ({
             },
         }),
         GeminiAI,
-        FalAI
+        FalAI,
+        OpenRouterAI
     ],
     editorProps: {
         attributes: {
