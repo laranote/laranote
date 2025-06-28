@@ -40,6 +40,29 @@ class AdminPageController extends Controller
 
         $project->name = $request->validated('project_name');
         $project->default_user_role = $request->validated('default_role');
+
+        // Handle API keys - update if provided, clear if explicitly set to 'CLEAR_KEY'
+        $geminiKey = $request->validated('gemini_api_key');
+        if ($geminiKey === 'CLEAR_KEY') {
+            $project->gemini_api_key = null;
+        } elseif (!empty($geminiKey)) {
+            $project->gemini_api_key = $geminiKey;
+        }
+
+        $falKey = $request->validated('fal_api_key');
+        if ($falKey === 'CLEAR_KEY') {
+            $project->fal_api_key = null;
+        } elseif (!empty($falKey)) {
+            $project->fal_api_key = $falKey;
+        }
+
+        $openrouterKey = $request->validated('openrouter_api_key');
+        if ($openrouterKey === 'CLEAR_KEY') {
+            $project->openrouter_api_key = null;
+        } elseif (!empty($openrouterKey)) {
+            $project->openrouter_api_key = $openrouterKey;
+        }
+
         $project->save();
 
     }

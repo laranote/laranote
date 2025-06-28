@@ -18,7 +18,10 @@ class StoreAdminSettingsRequest extends FormRequest
             "project_name" => "required|string",
             "project_logo" => "nullable|image|mimes:jpeg,png,jpg,gif|max:2048",
             "default_role" => "nullable",
-            "remove_logo" => "boolean"
+            "remove_logo" => "boolean",
+            "gemini_api_key" => "nullable|string",
+            "fal_api_key" => "nullable|string",
+            "openrouter_api_key" => "nullable|string",
         ];
     }
 
@@ -27,7 +30,7 @@ class StoreAdminSettingsRequest extends FormRequest
         if ($this->remove_logo === 'false') {
             $this->merge(['remove_logo' => false]);
         }
-        
+
         if ($this->remove_logo === 'true') {
             $this->merge(['remove_logo' => true]);
         }

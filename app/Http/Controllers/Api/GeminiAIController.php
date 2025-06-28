@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GeminiAIRequest;
+use App\Models\Project;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
 
@@ -17,8 +18,8 @@ class GeminiAIController extends Controller
      */
     public function generate(GeminiAIRequest $request): JsonResponse
     {
-
-        $apiKey = config('services.gemini.key');
+        $project = Project::first();
+        $apiKey = $project->gemini_api_key ?? config('services.gemini.key');
 
         // Check if API key is not set
         if (!$apiKey) {
@@ -28,7 +29,7 @@ class GeminiAIController extends Controller
             return response()->json([
                 'error' => 'Gemini API key not configured',
                 'errorCode' => 'API_KEY_MISSING',
-                'message' => 'Please add your Gemini API key to the .env file (GEMINI_API_KEY=your_key_here)'
+                'message' => 'Please add your Gemini API key in the project settings or in the .env file'
             ], 500);
         }
 
@@ -124,7 +125,14 @@ class GeminiAIController extends Controller
                 if ($errorCode == 503 && str_contains($errorMessage, 'overloaded')) {
                     $userMessage = 'The Gemini AI service is currently overloaded. Please try again later.';
                 } elseif ($errorCode == 400) {
-                    $userMessage = 'Invalid request to Gemini AI. Please check your input.';
+                    // Check if the error is related to an invalid API key
+                    if (str_contains(strtolower($errorMessage), 'api key') ||
+                        str_contains(strtolower($errorMessage), 'key not valid') ||
+                        str_contains(strtolower($errorMessage), 'invalid key')) {
+                        $userMessage = 'The Gemini API key you entered is not valid. Please provide a valid API key in your project settings.';
+                    } else {
+                        $userMessage = 'Invalid request to Gemini AI. Please check your input.';
+                    }
                 } elseif ($errorCode == 401 || $errorCode == 403) {
                     $userMessage = 'Authentication error with Gemini AI. Please check your API key.';
                 }

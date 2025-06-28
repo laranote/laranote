@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OpenRouterAIRequest;
+use App\Models\Project;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
 
@@ -17,7 +18,8 @@ class OpenRouterAIController extends Controller
      */
     public function generate(OpenRouterAIRequest $request): JsonResponse
     {
-        $apiKey = config('services.openrouter_ai.key');
+        $project = Project::first();
+        $apiKey = $project->openrouter_api_key ?? config('services.openrouter_ai.key');
 
         // Check if API key is not set
         if (!$apiKey) {
@@ -26,7 +28,7 @@ class OpenRouterAIController extends Controller
             return response()->json([
                 'error' => 'OpenRouter API key not configured',
                 'errorCode' => 'API_KEY_MISSING',
-                'message' => 'Please add your OpenRouter API key to the .env file (OPENROUTER_AI_API_KEY=your_key_here)'
+                'message' => 'Please add your OpenRouter API key in the project settings or in the .env file'
             ], 500);
         }
 
