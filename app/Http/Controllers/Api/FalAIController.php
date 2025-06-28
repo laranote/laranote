@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -21,14 +22,16 @@ class FalAIController extends Controller
      */
     public function proxy(Request $request)
     {
-        $apiKey = config('services.fal_ai.key');
+        $project = Project::first();
+        $apiKey = $project->fal_api_key ?? config('services.fal_ai.key');
 
         // Check if API key is not set
         if (!$apiKey) {
             Log::warning('No FalAI API key configured for proxy');
             return response()->json([
                 'error' => 'FalAI API key not configured',
-                'message' => 'Please add your FalAI API key to the .env file (FAL_AI_API_KEY=your_key_here)'
+                'errorCode' => 'API_KEY_MISSING',
+                'message' => 'You need to add a FalAI API key in your project settings or in the .env file before using this feature'
             ], 500);
         }
 
@@ -86,10 +89,29 @@ class FalAIController extends Controller
                 'target_url' => $targetUrl
             ]);
 
+            $userMessage = 'Proxy error';
+            $errorCode = 'PROXY_ERROR';
+
+            // Check for API key related errors
+            if (str_contains(strtolower($e->getMessage()), 'auth') ||
+                str_contains(strtolower($e->getMessage()), 'api key') ||
+                str_contains(strtolower($e->getMessage()), 'authorization')) {
+                $userMessage = 'The FalAI API key you entered is not valid. Please provide a valid API key in your project settings.';
+                $errorCode = 'INVALID_API_KEY';
+            } elseif (str_contains($e->getMessage(), 'cURL error 28')) {
+                $userMessage = 'Connection timeout when calling FalAI. The service might be down.';
+                $errorCode = 'CONNECTION_TIMEOUT';
+            } elseif (str_contains($e->getMessage(), 'cURL error 6')) {
+                $userMessage = 'Could not resolve host for FalAI. Please check your internet connection.';
+                $errorCode = 'HOST_NOT_FOUND';
+            }
+
             return response()->json([
-                'error' => 'Proxy error',
+                'error' => $userMessage,
+                'errorCode' => $errorCode,
                 'message' => $e->getMessage()
             ], 500);
         }
     }
 }
+
