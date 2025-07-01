@@ -24,8 +24,8 @@ class AuthenticationPageController extends Controller
     {
         $project = Project::query()->first();
 
+        $project->fill($request->validated());
         $project->magicmk_api_key = $request->validated('magicmk_api_key');
-        $project->update($request->validated());
         $project->save();
     }
 }
