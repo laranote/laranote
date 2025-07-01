@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\AdminPageController;
 use App\Http\Controllers\Admin\AuthenticationPageController;
+use App\Http\Controllers\Admin\ClearApiKeyController;
+use App\Http\Controllers\Admin\RemoveLogoController;
 use App\Http\Controllers\Admin\UsersPageController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DocsController;
@@ -51,6 +53,10 @@ Route::middleware([ProjectIsInitialized::class])->group(function () {
                 'index' => 'admin.index',
                 'store' => 'admin.store'
             ]);
+
+            Route::delete('admin/logo/delete', RemoveLogoController::class)->name('admin.logo.remove');
+
+            Route::delete('admin/api-key/clear', ClearApiKeyController::class)->name('admin.api-key.clear');
 
             Route::resource('admin/users', UsersPageController::class)->only(['index', 'store'])->names([
                 'index' => 'users.index',

@@ -15,7 +15,6 @@ class AuthenticationPageController extends Controller
     public function index(): Response
     {
         return Inertia::render('Admin/Authentication', [
-            'project' => Project::first(),
             'authTypes' => AuthType::array(),
             'magicMkAuthType' => AuthType::MAGIC_MK->value
         ]);
@@ -23,7 +22,10 @@ class AuthenticationPageController extends Controller
 
     public function store(StoreAuthenticationRequest $request): void
     {
-        $project = Project::first();
+        $project = Project::query()->first();
+
+        $project->magicmk_api_key = $request->validated('magicmk_api_key');
         $project->update($request->validated());
+        $project->save();
     }
 }

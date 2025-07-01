@@ -15,8 +15,7 @@ class AdminPageController extends Controller
     public function index(): Response
     {
         return Inertia::render('Admin/Settings', [
-            'roles' => UserRoles::array(),
-            'project' => Project::query()->first(),
+            'userRoles' => UserRoles::array(),
         ]);
     }
 
@@ -24,43 +23,24 @@ class AdminPageController extends Controller
     {
         $project = Project::query()->first();
 
-        if (!empty($request->validated('remove_logo')) && $project->logo_url) {
-            Storage::disk('public')->delete($project->logo_url);
-            $project->logo_url = null;
-        }
-
         if ($request->hasFile('project_logo')) {
             if ($project->logo_url) {
                 Storage::disk('public')->delete($project->logo_url);
             }
 
-            $path = $request->file('project_logo')->store('logos', 'public');
-            $project->logo_url = $path;
+            $project->logo_url = $request->file('project_logo')->store('logos', 'public');
         }
 
         $project->name = $request->validated('project_name');
         $project->default_user_role = $request->validated('default_role');
 
-        // Handle API keys - update if provided, clear if explicitly set to 'CLEAR_KEY'
-        $geminiKey = $request->validated('gemini_api_key');
-        if ($geminiKey === 'CLEAR_KEY') {
-            $project->gemini_api_key = null;
-        } elseif (!empty($geminiKey)) {
-            $project->gemini_api_key = $geminiKey;
-        }
+        $apiKeys = ['gemini_api_key', 'fal_api_key', 'openrouter_api_key'];
 
-        $falKey = $request->validated('fal_api_key');
-        if ($falKey === 'CLEAR_KEY') {
-            $project->fal_api_key = null;
-        } elseif (!empty($falKey)) {
-            $project->fal_api_key = $falKey;
-        }
-
-        $openrouterKey = $request->validated('openrouter_api_key');
-        if ($openrouterKey === 'CLEAR_KEY') {
-            $project->openrouter_api_key = null;
-        } elseif (!empty($openrouterKey)) {
-            $project->openrouter_api_key = $openrouterKey;
+        foreach ($apiKeys as $key) {
+            $value = $request->validated($key);
+            if ($value !== null) {
+                $project->{$key} = $value;
+            }
         }
 
         $project->save();

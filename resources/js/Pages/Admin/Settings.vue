@@ -58,116 +58,41 @@
                         v-model="form.default_role"
                         class="w-full px-3 py-2 border rounded-lg dark:bg-neutral-800 dark:border-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
                     >
-                        <option v-for="(value, name) in roles" :key="value" :value="value">
+                        <option v-for="(value, name) in userRoles" :key="value" :value="value">
                             {{ name }}
                         </option>
                     </select>
                 </div>
 
-                <!-- Gemini API Key -->
-                <div class="mb-6">
-                    <label for="gemini_api_key" class="block text-sm font-medium mb-2 dark:text-gray-200">Gemini API Key</label>
+                <div v-for="key in apiKeyFields" :key="key.id" class="mb-6">
+                    <label :for="key.id" class="block text-sm font-medium mb-2 dark:text-gray-200">{{ key.label }}</label>
                     <div class="relative flex items-center">
                         <input
-                            id="gemini_api_key"
-                            :type="(!project.has_gemini_key && showKeys.gemini) ? 'text' : 'password'"
-                            v-model="form.gemini_api_key"
-                            :readonly="project.has_gemini_key"
-                            :placeholder="project.has_gemini_key ? '••••••••••••••••••••••••••••••••' : 'Enter your Gemini API key'"
-                            :class="project.has_gemini_key ? 'w-full px-3 py-2 border rounded-lg dark:bg-neutral-800 dark:border-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500' : 'w-full pr-10 px-3 py-2 border rounded-lg dark:bg-neutral-800 dark:border-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500'"
+                            :id="key.id"
+                            :type="(!project[key.hasKeyProp] && showKeys[key.showKeyProp]) ? 'text' : 'password'"
+                            v-model="form[key.model]"
+                            :readonly="project[key.hasKeyProp]"
+                            :placeholder="project[key.hasKeyProp] ? '••••••••••••••••••••••••••••••••' : `Enter your ${key.label} API key`"
+                            :class="project[key.hasKeyProp] ? 'w-full px-3 py-2 border rounded-lg dark:bg-neutral-800 dark:border-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500' : 'w-full pr-10 px-3 py-2 border rounded-lg dark:bg-neutral-800 dark:border-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500'"
                         />
                         <button
-                            v-if="!project.has_gemini_key"
+                            v-if="!project[key.hasKeyProp]"
                             type="button"
-                            @click="toggleVisibility('gemini')"
+                            @click="toggleVisibility(key.showKeyProp)"
                             class="absolute right-0 inset-y-0 flex items-center px-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer"
                         >
-                            <VisibilityIcon v-if="showKeys.gemini" />
+                            <VisibilityIcon v-if="showKeys[key.showKeyProp]" />
                             <VisibilityOffIcon v-else />
                         </button>
                     </div>
                     <div class="flex items-center justify-between mt-1">
-                        <p class="text-sm" :class="project.has_gemini_key ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'">
-                            {{ project.has_gemini_key ? '✓ API key is configured' : 'No API key configured' }}
+                        <p class="text-sm" :class="project[key.hasKeyProp] ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'">
+                            {{ project[key.hasKeyProp] ? '✓ API key is configured' : 'No API key configured' }}
                         </p>
                         <button
-                            v-if="project.has_gemini_key"
+                            v-if="project[key.hasKeyProp]"
                             type="button"
-                            @click="clearApiKey('gemini')"
-                            class="text-sm text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
-                        >
-                            Clear Key
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Fal API Key -->
-                <div class="mb-6">
-                    <label for="fal_api_key" class="block text-sm font-medium mb-2 dark:text-gray-200">Fal API Key</label>
-                    <div class="relative flex items-center">
-                        <input
-                            id="fal_api_key"
-                            :type="(!project.has_fal_key && showKeys.fal) ? 'text' : 'password'"
-                            v-model="form.fal_api_key"
-                            :readonly="project.has_fal_key"
-                            :placeholder="project.has_fal_key ? '••••••••••••••••••••••••••••••••' : 'Enter your Fal API key'"
-                            :class="project.has_fal_key ? 'w-full px-3 py-2 border rounded-lg dark:bg-neutral-800 dark:border-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500' : 'w-full pr-10 px-3 py-2 border rounded-lg dark:bg-neutral-800 dark:border-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500'"
-                        />
-                        <button
-                            v-if="!project.has_fal_key"
-                            type="button"
-                            @click="toggleVisibility('fal')"
-                            class="absolute right-0 inset-y-0 flex items-center px-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer"
-                        >
-                            <VisibilityIcon v-if="showKeys.fal" />
-                            <VisibilityOffIcon v-else />
-                        </button>
-                    </div>
-                    <div class="flex items-center justify-between mt-1">
-                        <p class="text-sm" :class="project.has_fal_key ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'">
-                            {{ project.has_fal_key ? '✓ API key is configured' : 'No API key configured' }}
-                        </p>
-                        <button
-                            v-if="project.has_fal_key"
-                            type="button"
-                            @click="clearApiKey('fal')"
-                            class="text-sm text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
-                        >
-                            Clear Key
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Openrouter API Key -->
-                <div class="mb-6">
-                    <label for="openrouter_api_key" class="block text-sm font-medium mb-2 dark:text-gray-200">Openrouter API Key</label>
-                    <div class="relative flex items-center">
-                        <input
-                            id="openrouter_api_key"
-                            :type="(!project.has_openrouter_key && showKeys.openrouter) ? 'text' : 'password'"
-                            v-model="form.openrouter_api_key"
-                            :readonly="project.has_openrouter_key"
-                            :placeholder="project.has_openrouter_key ? '••••••••••••••••••••••••••••••••' : 'Enter your OpenRouter API key'"
-                            :class="project.has_openrouter_key ? 'w-full px-3 py-2 border rounded-lg dark:bg-neutral-800 dark:border-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500' : 'w-full pr-10 px-3 py-2 border rounded-lg dark:bg-neutral-800 dark:border-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500'"
-                        />
-                        <button
-                            v-if="!project.has_openrouter_key"
-                            type="button"
-                            @click="toggleVisibility('openrouter')"
-                            class="absolute right-0 inset-y-0 flex items-center px-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer"
-                        >
-                            <VisibilityIcon v-if="showKeys.openrouter" />
-                            <VisibilityOffIcon v-else />
-                        </button>
-                    </div>
-                    <div class="flex items-center justify-between mt-1">
-                        <p class="text-sm" :class="project.has_openrouter_key ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'">
-                            {{ project.has_openrouter_key ? '✓ API key is configured' : 'No API key configured' }}
-                        </p>
-                        <button
-                            v-if="project.has_openrouter_key"
-                            type="button"
-                            @click="clearApiKey('openrouter')"
+                            @click="clearApiKey(key.id)"
                             class="text-sm text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
                         >
                             Clear Key
@@ -190,23 +115,20 @@
 
 <script setup>
 import AdminLayout from "@/Layouts/AdminLayout.vue";
-import {Head, useForm} from "@inertiajs/vue3";
+import {Head, useForm, usePage, router} from "@inertiajs/vue3";
 import {ref, watch} from 'vue';
 import VisibilityIcon from "../../../icons/VisibilityIcon.vue";
 import VisibilityOffIcon from "../../../icons/VisibilityOffIcon.vue";
 
 const props = defineProps({
-    roles: {
+    userRoles: {
         type: Object,
         required: true
     },
-    project: {
-        type: Object,
-        required: true
-    }
 });
 
 const imagePreview = ref(null);
+const project = usePage().props.project;
 
 const showKeys = ref({
     gemini: false,
@@ -214,18 +136,41 @@ const showKeys = ref({
     openrouter: false,
 });
 
+const apiKeyFields = [
+    {
+        id: 'gemini',
+        label: 'Gemini API Key',
+        hasKeyProp: 'has_gemini_key',
+        showKeyProp: 'gemini',
+        model: 'gemini_api_key',
+    },
+    {
+        id: 'fal',
+        label: 'Fal API Key',
+        hasKeyProp: 'has_fal_key',
+        showKeyProp: 'fal',
+        model: 'fal_api_key',
+    },
+    {
+        id: 'openrouter',
+        label: 'Openrouter API Key',
+        hasKeyProp: 'has_openrouter_key',
+        showKeyProp: 'openrouter',
+        model: 'openrouter_api_key',
+    },
+]
+
 const form = useForm({
-    project_name: props.project.name,
+    project_name: project.name,
     project_logo: null,
-    default_role: props.project.default_user_role,
-    remove_logo: false,
+    default_role: project.default_user_role,
     gemini_api_key: '',
     fal_api_key: '',
     openrouter_api_key: '',
 });
 
 // Watch for project prop changes to update form
-watch(() => props.project, (newProject) => {
+watch(() => project, (newProject) => {
     form.project_name = newProject.name;
     form.default_role = newProject.default_user_role;
 }, { deep: true });
@@ -234,7 +179,6 @@ const handleImageInput = (event) => {
     const file = event.target.files[0];
     if (file) {
         form.project_logo = file;
-        form.remove_logo = false;
         const reader = new FileReader();
         reader.onload = (e) => {
             imagePreview.value = e.target.result;
@@ -244,16 +188,13 @@ const handleImageInput = (event) => {
 };
 
 const removeLogo = () => {
-    const removeForm = useForm({
-        project_name: form.project_name,
-        default_role: form.default_role,
-        remove_logo: true
-    });
+    const removeForm = useForm({});
 
-    removeForm.post(route('admin.store'), {
+    removeForm.delete(route('admin.logo.remove'), {
         preserveScroll: true,
         onSuccess: () => {
             imagePreview.value = null;
+            router.visit(window.location.href);
         },
     });
 };
@@ -264,17 +205,13 @@ function toggleVisibility(keyName) {
 
 function clearApiKey(keyName) {
     const clearForm = useForm({
-        project_name: form.project_name,
-        default_role: form.default_role,
-        gemini_api_key: keyName === 'gemini' ? 'CLEAR_KEY' : '',
-        fal_api_key: keyName === 'fal' ? 'CLEAR_KEY' : '',
-        openrouter_api_key: keyName === 'openrouter' ? 'CLEAR_KEY' : '',
+        key_type: keyName
     });
 
-    clearForm.post(route('admin.store'), {
+    clearForm.delete(route('admin.api-key.clear'), {
         preserveScroll: true,
         onSuccess: () => {
-            // The page will refresh with updated project data
+            router.visit(window.location.href);
         },
     });
 }
@@ -283,14 +220,8 @@ const submit = () => {
     form.post(route('admin.store'), {
         preserveScroll: true,
         onSuccess: () => {
-            form.project_logo = null;
-            // Clear API key fields after successful save
-            form.gemini_api_key = '';
-            form.fal_api_key = '';
-            form.openrouter_api_key = '';
-            if (!form.remove_logo) {
-                imagePreview.value = null;
-            }
+            imagePreview.value = null;
+            router.visit(window.location.href);
         },
     });
 };
