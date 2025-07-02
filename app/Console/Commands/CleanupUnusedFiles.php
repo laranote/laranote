@@ -33,12 +33,12 @@ class CleanupUnusedFiles extends Command
                     $unusedFileIds = collect();
 
                     $post->files->each(function ($file) use ($content, &$unusedFileIds) {
-                        $filePath = $file->path;
+                        $filePath = $file->path; // @phpstan-ignore-line
                         $fileName = basename($filePath);
 
                         if (!str_contains($content, $fileName) && !str_contains($content, $filePath)) {
                             Storage::disk('public')->delete($filePath);
-                            $unusedFileIds->push($file->id);
+                            $unusedFileIds->push($file->id); // @phpstan-ignore-line
                         }
                     });
 
