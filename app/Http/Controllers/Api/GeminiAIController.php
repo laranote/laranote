@@ -19,7 +19,7 @@ class GeminiAIController extends Controller
     public function generate(GeminiAIRequest $request): JsonResponse
     {
         $project = Project::first();
-        $apiKey = $project->gemini_api_key ?? config('services.gemini.key');
+        $apiKey = $project->gemini_api_key;
 
         // Check if API key is not set
         if (!$apiKey) {
@@ -29,7 +29,7 @@ class GeminiAIController extends Controller
             return response()->json([
                 'error' => 'Gemini API key not configured',
                 'errorCode' => 'API_KEY_MISSING',
-                'message' => 'Please add your Gemini API key in the project settings or in the .env file'
+                'message' => 'Please add your Gemini API key in the project settings.'
             ], 500);
         }
 

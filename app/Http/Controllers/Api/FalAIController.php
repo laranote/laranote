@@ -23,7 +23,7 @@ class FalAIController extends Controller
     public function proxy(Request $request)
     {
         $project = Project::first();
-        $apiKey = $project->fal_api_key ?? config('services.fal_ai.key');
+        $apiKey = $project->fal_api_key;
 
         // Check if API key is not set
         if (!$apiKey) {
@@ -31,7 +31,7 @@ class FalAIController extends Controller
             return response()->json([
                 'error' => 'FalAI API key not configured',
                 'errorCode' => 'API_KEY_MISSING',
-                'message' => 'You need to add a FalAI API key in your project settings or in the .env file before using this feature'
+                'message' => 'You need to add a FalAI API key in your project settings.'
             ], 500);
         }
 

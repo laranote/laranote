@@ -19,7 +19,7 @@ class OpenRouterAIController extends Controller
     public function generate(OpenRouterAIRequest $request): JsonResponse
     {
         $project = Project::first();
-        $apiKey = $project->openrouter_api_key ?? config('services.openrouter_ai.key');
+        $apiKey = $project->openrouter_api_key;
 
         // Check if API key is not set
         if (!$apiKey) {
@@ -28,7 +28,7 @@ class OpenRouterAIController extends Controller
             return response()->json([
                 'error' => 'OpenRouter API key not configured',
                 'errorCode' => 'API_KEY_MISSING',
-                'message' => 'Please add your OpenRouter API key in the project settings or in the .env file'
+                'message' => 'Please add your OpenRouter API key in the project settings.'
             ], 500);
         }
 
