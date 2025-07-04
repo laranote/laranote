@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\UserRoles;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreAdminSettingsRequest extends FormRequest
 {
@@ -17,19 +19,10 @@ class StoreAdminSettingsRequest extends FormRequest
         return [
             "project_name" => "required|string",
             "project_logo" => "nullable|image|mimes:jpeg,png,jpg,gif|max:2048",
-            "default_role" => "nullable",
-            "remove_logo" => "boolean"
+            "default_role" => ["nullable", Rule::enum(UserRoles::class)],
+            "gemini_api_key" => "nullable|string",
+            "fal_api_key" => "nullable|string",
+            "openrouter_api_key" => "nullable|string",
         ];
-    }
-
-    protected function prepareForValidation()
-    {
-        if ($this->remove_logo === 'false') {
-            $this->merge(['remove_logo' => false]);
-        }
-        
-        if ($this->remove_logo === 'true') {
-            $this->merge(['remove_logo' => true]);
-        }
     }
 }

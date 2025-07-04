@@ -15,8 +15,7 @@ class AdminPageController extends Controller
     public function index(): Response
     {
         return Inertia::render('Admin/Settings', [
-            'roles' => UserRoles::array(),
-            'project' => Project::query()->first(),
+            'userRoles' => UserRoles::array(),
         ]);
     }
 
@@ -24,22 +23,26 @@ class AdminPageController extends Controller
     {
         $project = Project::query()->first();
 
-        if (!empty($request->validated('remove_logo')) && $project->logo_url) {
-            Storage::disk('public')->delete($project->logo_url);
-            $project->logo_url = null;
-        }
-
         if ($request->hasFile('project_logo')) {
             if ($project->logo_url) {
                 Storage::disk('public')->delete($project->logo_url);
             }
 
-            $path = $request->file('project_logo')->store('logos', 'public');
-            $project->logo_url = $path;
+            $project->logo_url = $request->file('project_logo')->store('logos', 'public');
         }
 
         $project->name = $request->validated('project_name');
         $project->default_user_role = $request->validated('default_role');
+
+        $apiKeys = ['gemini_api_key', 'fal_api_key', 'openrouter_api_key'];
+
+        foreach ($apiKeys as $key) {
+            $value = $request->validated($key);
+            if ($value !== null) {
+                $project->{$key} = $value;
+            }
+        }
+
         $project->save();
 
     }

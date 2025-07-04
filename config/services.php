@@ -34,16 +34,4 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-
-    'gemini' => [
-        'key' => env('GEMINI_API_KEY'),
-    ],
-
-    'fal_ai' => [
-        'key' => env('FAL_AI_API_KEY'),
-    ],
-    'openrouter_ai' => [
-        'key' => env('OPENROUTER_AI_API_KEY'),
-    ]
-
 ];

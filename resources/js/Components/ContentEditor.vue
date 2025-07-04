@@ -9,9 +9,12 @@
                 placement: 'bottom-start',
                 offset: [0, 10]
             }"
-            class="bubble-menu flex items-center gap-1 p-2 rounded-lg shadow-lg bg-white border border-gray-200 min-w-[840px] dark:text-gray-300 dark:bg-neutral-800 "
+            :class="[
+                'bubble-menu flex items-center gap-1 p-2 rounded-lg shadow-lg bg-white border border-gray-200 dark:text-gray-300 dark:bg-neutral-800',
+                filteredButtonSections.length >= 10 ? 'min-w-[840px]' : 'w-fit'
+            ]"
         >
-            <template v-for="(section, sectionIndex) in buttonSections" :key="sectionIndex">
+            <template v-for="(section, sectionIndex) in filteredButtonSections" :key="sectionIndex">
                 <template v-for="(button, buttonIndex) in section" :key="buttonIndex">
                     <EditorButton
                         :icon="button.icon"
@@ -20,7 +23,7 @@
                         :onClick="() => button.onClick(editor, setLink)"
                     />
                 </template>
-                <div v-if="sectionIndex < buttonSections.length - 1" class="w-px h-5 bg-gray-200 mx-1 dark:bg-gray-600"></div>
+                <div v-if="sectionIndex < filteredButtonSections.length - 1" class="w-px h-5 bg-gray-200 mx-1 dark:bg-gray-600"></div>
             </template>
 
             <div class="relative">
@@ -55,7 +58,7 @@
 <script setup>
 import {useEditor, EditorContent, BubbleMenu} from '@tiptap/vue-3'
 import {usePage} from "@inertiajs/vue3";
-import {ref, onBeforeUnmount, onMounted} from 'vue'
+import {ref, onBeforeUnmount, onMounted, computed} from 'vue'
 import {commonEmojis} from '../Data/emojis'
 import {buttonSections} from '../Data/editorButtons'
 import {createEditor} from '../Config/editor'
@@ -194,6 +197,31 @@ if (typeof window !== 'undefined') {
     });
 
 }
+
+//Show AI buttons only when API keys are set
+const filteredButtonSections = computed(() =>{
+    const project = page.props.project;
+
+    const sections = [...buttonSections]
+
+    if(sections.length > 0){
+        const aiSection = sections[0].filter(button => {
+            switch(button.title) {
+                case "Ask AI":
+                    return project && project.has_gemini_key;
+                case "Generate Image":
+                    return project && project.has_fal_key;
+                case "Explore AI":
+                    return project && project.has_openrouter_key;
+                default:
+                    return true;
+            }
+        });
+
+        aiSection.length > 0 ? (sections[0] = aiSection) : sections.shift();
+    }
+    return sections;
+})
 
 </script>
 
