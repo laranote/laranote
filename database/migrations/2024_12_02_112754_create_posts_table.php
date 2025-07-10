@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
-            $table->binary('data')->nullable();
+            $table->longText('data')->charset('binary')->nullable();
             $table->foreignId('user_id');
             $table->integer('order')->nullable();
             $table->foreignId('post_id')->nullable();
